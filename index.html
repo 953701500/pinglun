@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        ul{
+            list-style: none;
+        }
+        div{
+            margin: auto;
+            width: 1000px;
+        }
+        h2{
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h3 {
+            color: #999;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        li {
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        li p:first-of-type img {
+            width: 65px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        li p:first-of-type span:first-of-type, li p:nth-of-type(2) {
+            font-size: 20px;
+
+        }
+
+        li p:first-of-type span:first-of-type {
+            color: #666;
+            margin-left: 20px;
+        }
+
+        li p:nth-of-type(2) {
+            color: #444;
+            margin: 0 0 20px 85px;
+
+        }
+
+        li p:first-of-type span:last-of-type {
+            color: #bbb;
+            font-size: 16px;
+            float: right;
+        }
+
+        li p:nth-of-type(3) img:nth-of-type(1) {
+            margin-left: 85px;
+            width: 30px;
+            vertical-align: middle;
+        }
+
+        li p:nth-of-type(3) span {
+            color: #999;
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        li p:nth-of-type(3) img:nth-of-type(2) {
+            float: right;
+            width: 30px;
+        }
+        li p:nth-of-type(3) img:nth-of-type(2),
+        li p:nth-of-type(3) img:nth-of-type(1),
+        li p:first-of-type img,
+        li p:first-of-type span:first-of-type{
+            cursor:pointer;
+            transition:all 0.5s;
+        }
+        li p:first-of-type img:hover,
+        li p:nth-of-type(3) img:nth-of-type(1):hover,
+        li p:nth-of-type(3) img:nth-of-type(2):hover{
+            transform:scale(1.1);
+        }
+    </style>
+</head>
+<body>
+<div>
+<h2>精彩评论</h2>
+<ul></ul>
+</div>
+<script>
+    var ul=document.querySelector('ul');
+    function ajax(obj) {
+        var url=obj.url||'';
+        var type=obj.type||'get';
+        var asyn=obj.asyn||true;
+        var xhr=new XMLHttpRequest();
+        xhr.open(type,url,asyn);
+        xhr.send();
+        xhr.onreadystatechange=function () {
+            if(xhr.readyState===4&&xhr.status===200){
+                obj.success(xhr.responseText);
+            }
+            else{
+                obj.error(xhr.status);
+            }
+        }
+
+    }
+    ajax({
+        url:'http://api.artgoer.cn:8084/artgoer/api/v1/user/324380/v3/topic/topicHomeByLabel?pageIndex=1&token=b544cd63-6d42-46fe-a96c-3cf96bae3113&topicId=62187',
+        type:'get',
+        asyn:true,
+        success:function (d) {
+            for(var i=0;i<d.data.commentList.length;i++){
+                var str='';
+                str += '<li><p>';
+                str += '<img src="' + d.data.commentList[i].userPic + '" alt="头像"/>';
+                str += '<span>' + d.data.commentList[i].userName + '</span>';
+                str += '<span>' + timer(d.data.commentList[i].createAt) + '</span></p>';
+                str += '<p>' + d.data.commentList[i].commentTxt + '</p>';
+                str += '<p><img src="images/star.png" alt="赞"/>';
+                str += ' <span>' + d.data.commentList[i].replyNum + '</span>';
+                str += ' <img src="images/new.png" alt="留言"/>';
+                str += ' </p> </li>';
+                ul.innerHTML+=str;
+            }
+        },
+        error:function (status) {
+            console.log(status);
+        },
+    });
+</script>
+</body>
+</html>
